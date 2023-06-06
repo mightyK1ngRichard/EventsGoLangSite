@@ -123,6 +123,7 @@ func (a *APIServer) event() http.HandlerFunc {
 				return
 			}
 			templatePath := filepath.Join(rootDir, "templates", "event.html")
+			//cssPath := filepath.Join(rootDir, "static", "styles.css")
 			tmpl, err := template.ParseFiles(templatePath)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -132,6 +133,7 @@ func (a *APIServer) event() http.HandlerFunc {
 			tmpl.Execute(w, map[string]interface{}{
 				"event":    event,
 				"comments": comments,
+				//"cssPath":  cssPath,
 			})
 		}
 	}
