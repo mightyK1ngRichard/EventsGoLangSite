@@ -1,0 +1,66 @@
+package store
+
+import (
+	"database/sql"
+	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
+)
+
+type Store struct {
+	config          *Config
+	logger          *logrus.Logger
+	db              *sql.DB
+	tesRepository   *TestRepository
+	eventRepository *EventRepository
+}
+
+func NewStore(config *Config, logger *logrus.Logger) *Store {
+	return &Store{
+		config: config,
+		logger: logger,
+	}
+}
+
+func (s *Store) Open() error {
+	db, err := sql.Open("postgres", s.config.DataBaseURL)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Ping(); err != nil {
+		return err
+	}
+
+	s.db = db
+	s.logger.Info("created db connection")
+	return nil
+}
+
+func (s *Store) Close() error {
+	if err := s.db.Close(); err != nil {
+		return err
+	}
+	s.logger.Println("close db connection")
+	return nil
+}
+
+// Test TODO: убрать.
+func (s *Store) Test() *TestRepository {
+	if s.tesRepository != nil {
+		return s.tesRepository
+	}
+	s.tesRepository = &TestRepository{
+		store: s,
+	}
+	return s.tesRepository
+}
+
+func (s *Store) Event() *EventRepository {
+	if s.eventRepository != nil {
+		return s.eventRepository
+	}
+	s.eventRepository = &EventRepository{
+		store: s,
+	}
+	return s.eventRepository
+}

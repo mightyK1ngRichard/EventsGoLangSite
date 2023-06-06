@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Мероприятия</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="../static/styles.css" rel="stylesheet">
+    <style>
+        .event {
+            border-color: rgba(0, 0, 0, 0.94);
+            padding: 2px 60px;
+            margin: 15px 30px;
+        }
+
+        .row {
+            border-radius: 20px;
+            background: rgba(76, 84, 84, 0.11);
+        }
+    </style>
+</head>
+<body>
+<h1>Список мероприятий</h1>
+{{ range . }}
+<div class="event">
+    <div class="row">
+        <div class="col-1">
+        </div>
+        <div class="col-11">
+            <h3><a href="/events/{{ .ID }}" style="color: rgba(0,0,0,0.85)"> Заголовок </a></h3>
+            <div>
+                <div>{{ .Category }}</div>
+                <div>Описание:
+                    {{ .Description }}
+                </div>
+                <div>Начало: {{ .StartDatetime }}</div>
+                <div>Конец: {{ .EndDatetime }}</div>
+                <div>Цена: {{ .Price }}</div>
+                <div>Адрес: {{ .Address }}</div>
+                <div>Ораганизация: {{ .Organizer }}</div>
+                <nav>Контакты: {{ .Contacts }}</nav>
+            </div>
+        </div>
+
+    </div>
+</div>
+{{ end }}
+</body>
+</html>
