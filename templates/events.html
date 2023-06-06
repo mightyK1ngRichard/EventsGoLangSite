@@ -17,17 +17,24 @@
             border-radius: 20px;
             background: rgba(76, 84, 84, 0.11);
         }
+
+        .list-events-title {
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-<h1>Список мероприятий</h1>
+<h1 class="list-events-title">Список мероприятий</h1>
 {{ range . }}
 <div class="event">
     <div class="row">
         <div class="col-1">
         </div>
         <div class="col-11">
-            <h3><a href="/events/{{ .ID }}" style="color: rgba(0,0,0,0.85)"> Заголовок </a></h3>
+            <h3><a href="/event/{{ .ID }}" style="color: rgba(0,0,0,0.85)"> {{ .Title }} </a></h3>
             <div>
                 <div>{{ .Category }}</div>
                 <div>Описание:

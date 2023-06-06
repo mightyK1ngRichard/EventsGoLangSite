@@ -7,11 +7,11 @@ import (
 )
 
 type Store struct {
-	config          *Config
-	logger          *logrus.Logger
-	db              *sql.DB
-	tesRepository   *TestRepository
-	eventRepository *EventRepository
+	config            *Config
+	logger            *logrus.Logger
+	db                *sql.DB
+	eventRepository   *EventRepository
+	commentRepository *CommentRepository
 }
 
 func NewStore(config *Config, logger *logrus.Logger) *Store {
@@ -42,17 +42,6 @@ func (s *Store) Close() error {
 	}
 	s.logger.Println("close db connection")
 	return nil
-}
-
-// Test TODO: убрать.
-func (s *Store) Test() *TestRepository {
-	if s.tesRepository != nil {
-		return s.tesRepository
-	}
-	s.tesRepository = &TestRepository{
-		store: s,
-	}
-	return s.tesRepository
 }
 
 func (s *Store) Event() *EventRepository {

@@ -3,7 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/build/fill.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/build/init.sql" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/internal/app/store/testrepository.go" dialect="GenericSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>

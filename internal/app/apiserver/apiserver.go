@@ -1,10 +1,8 @@
 package apiserver
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/store"
 	"github.com/sirupsen/logrus"
 	"html/template"
@@ -13,7 +11,9 @@ import (
 )
 
 const (
-	homeURL = "/home"
+	homeURL   = "/home"
+	eventsURL = "/events"
+	eventURL  = "/event/{id}"
 )
 
 type APIServer struct {
@@ -54,9 +54,8 @@ func (a *APIServer) configLogger() error {
 }
 
 func (a *APIServer) configRouter() {
-	// TODO: удалить test
-	a.router.HandleFunc("/test", a.test())
-	a.router.HandleFunc("/events", a.events())
+	a.router.HandleFunc(eventsURL, a.events())
+	a.router.HandleFunc(eventURL, a.event())
 	a.router.HandleFunc(homeURL, a.home())
 }
 
@@ -72,29 +71,6 @@ func (a *APIServer) configStore() error {
 func (a *APIServer) home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-	}
-}
-
-// TODO: удалить test
-func (a *APIServer) test() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		newTest, err := a.store.Test().Create(&model.Test{
-			Name: "Dima",
-			Info: "Boss",
-		})
-		w.Header().Set("Content-Type", "application/json")
-		if err != nil {
-			a.logger.Fatalln(err)
-
-		} else {
-			marshal, err2 := json.Marshal(newTest)
-			if err2 != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				a.logger.Error(err)
-			}
-			a.logger.Infof("create new note: %v", newTest)
-			fmt.Fprintf(w, "%s", marshal)
-		}
 	}
 }
 
@@ -119,6 +95,44 @@ func (a *APIServer) events() http.HandlerFunc {
 				return
 			}
 			tmpl.Execute(w, list)
+		}
+	}
+}
+
+func (a *APIServer) event() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id := vars["id"]
+		event, comments, err := a.store.Event().EventByID(id)
+		if event == nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+
+		} else if comments == nil {
+			fmt.Fprintf(w, "Странно это всё, но обрабатывать лень")
+		}
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+
+		} else {
+			rootDir, err := filepath.Abs(".")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			templatePath := filepath.Join(rootDir, "templates", "event.html")
+			tmpl, err := template.ParseFiles(templatePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			tmpl.Execute(w, map[string]interface{}{
+				"event":    event,
+				"comments": comments,
+			})
 		}
 	}
 }
