@@ -1,7 +1,9 @@
 package store
 
 import (
+	"fmt"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
+	"strconv"
 	"time"
 )
 
@@ -11,7 +13,7 @@ type EventRepository struct {
 
 func (r *EventRepository) List() ([]*model.Event, error) {
 	rows, err := r.store.db.Query(
-		`SELECT * FROM events;`,
+		`SELECT * FROM events ORDER BY start_datetime;`,
 	)
 	if err != nil {
 		return nil, err
@@ -152,6 +154,38 @@ func (r *EventRepository) GetCommentsOfPost(id string) ([]*model.Comment, error)
 		return nil, err
 	}
 	return result, nil
+}
+
+func (r *EventRepository) CreateEvent(title, category, description, startDatetime, endDatetime, price, address,
+	organizer, contacts string) error {
+	priceValue, err := strconv.ParseFloat(price, 64)
+	if err != nil {
+		return err
+	}
+
+	var stDate interface{}
+	var enDate interface{}
+
+	if startDatetime == "" {
+		stDate = nil
+	} else {
+		stDate = startDatetime
+	}
+	if endDatetime == "" {
+		enDate = nil
+	} else {
+		enDate = endDatetime
+	}
+
+	if _, err := r.store.db.Exec(`
+	INSERT INTO Events 
+	(title, category, description, start_datetime, end_datetime, price, address, organizer, contacts) 
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
+		title, category, description, stDate, enDate, priceValue, address, organizer, contacts,
+	); err != nil {
+		return fmt.Errorf("errror in insert with: %s err: %s\n", price, err)
+	}
+	return nil
 }
 
 func CorrectDate(date string) string {

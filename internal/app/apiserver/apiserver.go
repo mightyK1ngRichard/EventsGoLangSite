@@ -154,7 +154,28 @@ func (a *APIServer) newEvent() http.HandlerFunc {
 				"base_html": template.HTML(templates.GetBaseHTML()),
 			})
 
-		case "PUT":
+		case "POST":
+			// Ридерект на старницу всех событий
+			defer http.Redirect(w, r, "/events", http.StatusFound)
+			err := r.ParseForm()
+			if err != nil {
+				http.Error(w, "Ошибка при парсинге формы", http.StatusInternalServerError)
+				return
+			}
+			title := r.Form.Get("title")
+			category := r.Form.Get("category")
+			description := r.Form.Get("description")
+			dateStart := r.Form.Get("date_start")
+			dateEnd := r.Form.Get("date_end")
+			price := r.Form.Get("price")
+			address := r.Form.Get("address")
+			organization := r.Form.Get("organization")
+			contacts := r.Form.Get("contacts")
+			if err := a.store.Event().CreateEvent(title, category, description, dateStart, dateEnd, price, address,
+				organization, contacts); err != nil {
+				a.logger.Error(err)
+				return
+			}
 
 		default:
 			http.NotFound(w, r)
