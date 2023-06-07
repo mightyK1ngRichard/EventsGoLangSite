@@ -30,7 +30,7 @@ func (r *TicketRepository) Tickets() ([]*model.Ticket, error) {
 		if err := rows.Scan(&e.ID, &e.Price, &e.PurchaseDate, &e.User, &e.Event); err != nil {
 			return nil, err
 		}
-
+		e.PurchaseDate = CorrectDate(e.PurchaseDate)
 		events = append(events, e)
 	}
 
