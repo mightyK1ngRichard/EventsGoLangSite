@@ -6,10 +6,12 @@
 ### Routers:
 ```http
 GET /events - Все мероприятия
+POST /events - поиск по заголовку
 GET /event/{id} - Мероприятие
+GET /tickets - Мероприятие 
 ```
 
 ### TODO:
 - [ ] ``/home``
-- [ ] ``/tickets``
+- [X] ``/tickets``
 - [ ] CI/CD

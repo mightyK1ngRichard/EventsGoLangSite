@@ -2,37 +2,37 @@
 CREATE TABLE Events
 (
     id             BIGSERIAL PRIMARY KEY,
-    title          VARCHAR(100),
-    category       VARCHAR(50),
-    description    VARCHAR(255),
-    start_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    end_datetime   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    price          REAL,
-    address        VARCHAR(100),
-    organizer      VARCHAR(100),
-    contacts       VARCHAR(100)
+    title          VARCHAR(100) NOT NULL,
+    category       VARCHAR(50)  NOT NULL,
+    description    VARCHAR(255) NOT NULL,
+    start_datetime TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    end_datetime   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    price          REAL         NOT NULL,
+    address        VARCHAR(100) NOT NULL,
+    organizer      VARCHAR(100) NOT NULL,
+    contacts       VARCHAR(100) NOT NULL
 );
 
 -- Создание таблицы "Пользователи"
 CREATE TABLE Users
 (
     id              BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(100),
-    email           VARCHAR(100),
-    password        VARCHAR(50),
-    age             INT,
-    address         VARCHAR(255),
-    viewing_history VARCHAR(255)
+    name            VARCHAR(100) NOT NULL,
+    email           VARCHAR(100) NOT NULL,
+    password        VARCHAR(50)  NOT NULL,
+    age             INT          NOT NULL,
+    address         VARCHAR(255) NOT NULL,
+    viewing_history VARCHAR(255) NOT NULL
 );
 
 -- Создание таблицы "Билеты"
 CREATE TABLE Tickets
 (
     id            BIGSERIAL PRIMARY KEY,
-    price         DECIMAL(10, 2),
-    purchase_date DATE,
-    user_id       INT,
-    event_id      INT,
+    price         DECIMAL(10, 2) NOT NULL,
+    purchase_date DATE           NOT NULL DEFAULT CURRENT_DATE,
+    user_id       INT            NOT NULL,
+    event_id      INT            NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users (id),
     FOREIGN KEY (event_id) REFERENCES Events (id)
 );
@@ -41,8 +41,8 @@ CREATE TABLE Tickets
 CREATE TABLE Favorites
 (
     id       BIGSERIAL PRIMARY KEY,
-    event_id INT,
-    user_id  INT,
+    event_id INT NOT NULL,
+    user_id  INT NOT NULL,
     FOREIGN KEY (event_id) REFERENCES Events (id),
     FOREIGN KEY (user_id) REFERENCES Users (id)
 );
@@ -51,10 +51,10 @@ CREATE TABLE Favorites
 CREATE TABLE Comments
 (
     id           BIGSERIAL PRIMARY KEY,
-    comment_text VARCHAR(255),
-    comment_date TIMESTAMP,
-    event_id     INT,
-    user_id      INT,
+    comment_text VARCHAR(255) NOT NULL,
+    comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    event_id     INT          NOT NULL,
+    user_id      INT          NOT NULL,
     FOREIGN KEY (event_id) REFERENCES Events (id),
     FOREIGN KEY (user_id) REFERENCES Users (id)
 );

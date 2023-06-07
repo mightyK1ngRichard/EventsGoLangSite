@@ -72,7 +72,7 @@ func GetBaseHTML() string {
                         <a class="nav-link" href="/tickets">Билеты</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Создать меропрятие</a>
+                        <a class="nav-link" href="/create-event">Создать меропрятие</a>
                     </li>
                 </ul>
                 <form class="d-flex" role="search" style="margin-right: 20px" method="POST" action="/events">

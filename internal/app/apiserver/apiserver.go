@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	homeURL    = "/home"
-	eventsURL  = "/events"
-	ticketsURL = "/tickets"
-	eventURL   = "/event/{id}"
+	homeURL     = "/home"
+	eventsURL   = "/events"
+	newEventURL = "/create-event"
+	ticketsURL  = "/tickets"
+	eventURL    = "/event/{id}"
 )
 
 type APIServer struct {
@@ -58,6 +59,7 @@ func (a *APIServer) configLogger() error {
 func (a *APIServer) configRouter() {
 	a.router.HandleFunc(eventsURL, a.events())
 	a.router.HandleFunc(ticketsURL, a.tickets())
+	a.router.HandleFunc(newEventURL, a.newEvent())
 	a.router.HandleFunc(eventURL, a.event())
 	a.router.HandleFunc(homeURL, a.home())
 }
@@ -79,7 +81,8 @@ func (a *APIServer) home() http.HandlerFunc {
 
 func (a *APIServer) events() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
+		switch r.Method {
+		case "POST":
 			titleFromForm := r.FormValue("searching_text")
 			events, err := a.store.Event().EventByTitle(titleFromForm)
 			if err != nil {
@@ -102,7 +105,7 @@ func (a *APIServer) events() http.HandlerFunc {
 				"list":      events,
 			})
 
-		} else if r.Method == "GET" {
+		case "GET":
 			list, err := a.store.Event().List()
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -126,7 +129,34 @@ func (a *APIServer) events() http.HandlerFunc {
 				})
 			}
 
-		} else {
+		default:
+			http.NotFound(w, r)
+		}
+
+	}
+}
+func (a *APIServer) newEvent() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			rootDir, err := filepath.Abs(".")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			templatePath := filepath.Join(rootDir, "templates", "create_event.html")
+			tmpl, err := template.ParseFiles(templatePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			tmpl.Execute(w, map[string]interface{}{
+				"base_html": template.HTML(templates.GetBaseHTML()),
+			})
+
+		case "PUT":
+
+		default:
 			http.NotFound(w, r)
 		}
 	}
