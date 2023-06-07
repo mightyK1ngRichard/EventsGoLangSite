@@ -17,7 +17,7 @@ func (r *EventRepository) List() ([]*model.Event, error) {
 	}
 	defer rows.Close()
 
-	var events []*model.Event
+	var events = make([]*model.Event, 0)
 	for rows.Next() {
 		e := &model.Event{}
 		if err := rows.Scan(&e.ID, &e.Title, &e.Category, &e.Description, &e.StartDatetime, &e.EndDatetime, &e.Price,

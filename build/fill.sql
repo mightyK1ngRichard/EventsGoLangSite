@@ -49,8 +49,24 @@ INSERT INTO Users (name, email, password, age, address, viewing_history)
 VALUES
     ('Иван Петров', 'ivan@example.com', 'password123', 25, 'ул. Цветная, 10', NULL),
     ('Анна Сидорова', 'anna@example.com', 'qwerty456', 30, 'ул. Солнечная, 5', NULL),
-    ('Михаил Иванов', 'mikhail@example.com', 'secure789', 35, 'пр. Победы, 20', NULL);
-
+    ('Михаил Иванов', 'mikhail@example.com', 'secure789', 35, 'пр. Победы, 20', NULL),
+    ('Екатерина Смирнова', 'ekaterina@example.com', 'password123', 28, 'ул. Розовая, 15', NULL),
+    ('Алексей Волков', 'alexey@example.com', 'qwerty456', 32, 'пр. Ленина, 7', NULL),
+    ('Ольга Кузнецова', 'olga@example.com', 'secure789', 45, 'ул. Зеленая, 25', NULL),
+    ('Дмитрий Николаев', 'dmitry@example.com', 'password123', 41, 'ул. Сиреневая, 12', NULL),
+    ('Андрей Козлов', 'andrey@example.com', 'qwerty456', 37, 'ул. Гагарина, 4', NULL),
+    ('Елена Морозова', 'elena@example.com', 'secure789', 29, 'пр. Мира, 8', NULL),
+    ('Александр Лебедев', 'alexander@example.com', 'password123', 33, 'ул. Желтая, 9', NULL),
+    ('Мария Васильева', 'maria@example.com', 'qwerty456', 36, 'пр. Солнечный, 14', NULL),
+    ('Игорь Попов', 'igor@example.com', 'secure789', 39, 'ул. Бирюзовая, 6', NULL),
+    ('Наталья Андреева', 'natalia@example.com', 'password123', 27, 'ул. Красноармейская, 3', NULL),
+    ('Павел Степанов', 'pavel@example.com', 'qwerty456', 31, 'пр. Советский, 2', NULL),
+    ('Светлана Жукова', 'svetlana@example.com', 'secure789', 43, 'ул. Горная, 18', NULL),
+    ('Антонина Ковалева', 'antonina@example.com', 'password123', 47, 'ул. Речная, 21', NULL),
+    ('Владимир Макаров', 'vladimir@example.com', 'qwerty456', 38, 'ул. Парковая, 17', NULL),
+    ('Татьяна Федорова', 'tatiana@example.com', 'secure789', 42, 'пр. Центральный, 11', NULL),
+    ('Игорь Медведев', 'igor@example.com', 'password123', 34, 'ул. Садовая, 13', NULL),
+    ('Оксана Крылова', 'oksana@example.com', 'qwerty456', 40, 'ул. Лесная, 16', NULL);
 -- Заполнение таблицы "Билеты" (Tickets)
 INSERT INTO Tickets (price, purchase_date, user_id, event_id)
 VALUES
@@ -75,3 +91,25 @@ VALUES
 insert into comments (comment_text, comment_date, event_id, user_id) values ('Слабо', '2023-06-09', '1', '2');
 
 insert into comments (comment_text, comment_date, event_id, user_id) values ('Мда, ждал лучше...', '2023-07-09', '1', '3');
+
+-- Комментарии для поста с ID 1
+INSERT INTO Comments (comment_text, comment_date, event_id, user_id)
+VALUES
+    ('Отличное выступление, понравилось!', '2023-06-11 10:30:00', 1, 1),
+    ('Хорошая атмосфера на мероприятии!', '2023-06-12 14:15:00', 1, 4),
+    ('Спасибо за интересную программу!', '2023-06-14 19:00:00', 1, 7);
+
+-- Комментарии для поста с ID 2
+INSERT INTO Comments (comment_text, comment_date, event_id, user_id)
+VALUES
+    ('Художественные работы на выставке впечатляют.', '2023-06-16 15:45:00', 2, 2),
+    ('Очень красивые и оригинальные работы!', '2023-06-17 11:20:00', 2, 5),
+    ('Интересная тематика выставки, рекомендую!', '2023-06-18 16:30:00', 2, 8);
+
+-- Комментарии для поста с ID 3
+INSERT INTO Comments (comment_text, comment_date, event_id, user_id)
+VALUES
+    ('Фестиваль гастрономии был великолепным!', '2023-06-21 20:15:00', 3, 3),
+    ('Прекрасные блюда и разнообразие выбора!', '2023-06-22 12:45:00', 3, 6),
+    ('Очень вкусно и атмосферно!', '2023-06-23 18:00:00', 3, 9);
+

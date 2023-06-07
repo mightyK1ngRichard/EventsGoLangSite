@@ -1,8 +1,8 @@
 package apiserver
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/store"
 	"github.com/sirupsen/logrus"
 	"html/template"
@@ -109,7 +109,7 @@ func (a *APIServer) event() http.HandlerFunc {
 			return
 
 		} else if comments == nil {
-			fmt.Fprintf(w, "Странно это всё, но обрабатывать лень")
+			comments = make([]*model.Comment, 0)
 		}
 
 		if err != nil {
