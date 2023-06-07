@@ -5,10 +5,11 @@
 
 ### Routers:
 ```http
-GET /events - Все мероприятия
-POST /events - поиск по заголовку
-GET /event/{id} - Мероприятие
-GET /tickets - Мероприятие 
+GET /events        - Все мероприятия
+POST /events       - поиск по заголовку
+POST /create-event - поиск по заголовку
+GET /event/{id}    - Мероприятие
+GET /tickets       - Билеты 
 ```
 
 ### TODO:

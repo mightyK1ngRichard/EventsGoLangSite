@@ -13,7 +13,7 @@
 
             for (let i = 0; i < inputs.length; i++) {
                 const input = inputs[i];
-                if (input.value === "") {
+                if (input.value === "") { // Игнорируем поля с типом "date"
                     input.classList.add("empty-field");
                     emptyFields.push(input);
                 } else {
@@ -27,6 +27,7 @@
             }
         }
     </script>
+
 </head>
 {{ .base_html }}
 <body>
@@ -48,12 +49,12 @@
             <div class="row">
                 <div class="col-md-6">
                     <label for="date_start" class="form-label">Начало</label>
-                    <input name="date_start" type="date" class="form-control" id="date_start"
+                    <input name="date_start" type="datetime-local" class="form-control" id="date_start"
                            placeholder="Выберите дату">
                 </div>
                 <div class="col-md-6">
                     <label for="date_end" class="form-label">Конец</label>
-                    <input name="date_end" type="date" class="form-control" id="date_end"
+                    <input name="date_end" type="datetime-local" class="form-control" id="date_end"
                            placeholder="Выберите дату">
                 </div>
             </div>
@@ -67,12 +68,14 @@
 
         <div class="mb-3">
             <label for="title" title="form-label">Организация</label>
-            <label for="organization"></label><input name="organization" type="text" class="form-control" id="organization"
+            <label for="organization"></label><input name="organization" type="text" class="form-control"
+                                                     id="organization"
                                                      placeholder="Введите имя организации">
         </div>
         <div class="mb-3">
             <label for="title" class="form-label">Цена</label>
-            <label for="organization"></label><label for="price"></label><input name="price" type="text" class="form-control" id="price"
+            <label for="organization"></label><label for="price"></label><input name="price" type="text"
+                                                                                class="form-control" id="price"
                                                                                 placeholder="Введите имя организации">
         </div>
         <div class="mb-3">
