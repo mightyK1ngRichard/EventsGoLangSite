@@ -12,6 +12,7 @@ type Store struct {
 	db                *sql.DB
 	eventRepository   *EventRepository
 	commentRepository *CommentRepository
+	ticketRepository  *TicketRepository
 }
 
 func NewStore(config *Config, logger *logrus.Logger) *Store {
@@ -52,4 +53,14 @@ func (s *Store) Event() *EventRepository {
 		store: s,
 	}
 	return s.eventRepository
+}
+
+func (s *Store) Ticket() *TicketRepository {
+	if s.ticketRepository != nil {
+		return s.ticketRepository
+	}
+	s.ticketRepository = &TicketRepository{
+		store: s,
+	}
+	return s.ticketRepository
 }

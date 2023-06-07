@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/store"
+	"github.com/mightyK1ngRichard/EventsGoLangSite/templates"
 	"github.com/sirupsen/logrus"
 	"html/template"
 	"net/http"
@@ -11,9 +12,10 @@ import (
 )
 
 const (
-	homeURL   = "/home"
-	eventsURL = "/events"
-	eventURL  = "/event/{id}"
+	homeURL    = "/home"
+	eventsURL  = "/events"
+	ticketsURL = "/tickets"
+	eventURL   = "/event/{id}"
 )
 
 type APIServer struct {
@@ -55,6 +57,7 @@ func (a *APIServer) configLogger() error {
 
 func (a *APIServer) configRouter() {
 	a.router.HandleFunc(eventsURL, a.events())
+	a.router.HandleFunc(ticketsURL, a.tickets())
 	a.router.HandleFunc(eventURL, a.event())
 	a.router.HandleFunc(homeURL, a.home())
 }
@@ -76,13 +79,13 @@ func (a *APIServer) home() http.HandlerFunc {
 
 func (a *APIServer) events() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		list, err := a.store.Event().List()
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-
-		} else {
+		if r.Method == "POST" {
+			titleFromForm := r.FormValue("searching_text")
+			events, err := a.store.Event().EventByTitle(titleFromForm)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			rootDir, err := filepath.Abs(".")
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,7 +97,65 @@ func (a *APIServer) events() http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			tmpl.Execute(w, list)
+			tmpl.Execute(w, map[string]interface{}{
+				"base_html": template.HTML(templates.GetBaseHTML()),
+				"list":      events,
+			})
+
+		} else if r.Method == "GET" {
+			list, err := a.store.Event().List()
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+
+			} else {
+				rootDir, err := filepath.Abs(".")
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				templatePath := filepath.Join(rootDir, "templates", "events.html")
+				tmpl, err := template.ParseFiles(templatePath)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				tmpl.Execute(w, map[string]interface{}{
+					"base_html": template.HTML(templates.GetBaseHTML()),
+					"list":      list,
+				})
+			}
+
+		} else {
+			http.NotFound(w, r)
+		}
+	}
+}
+
+func (a *APIServer) tickets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tickets, err := a.store.Ticket().Tickets()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+
+		} else {
+			rootDir, err := filepath.Abs(".")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			templatePath := filepath.Join(rootDir, "templates", "tickets.html")
+			tmpl, err := template.ParseFiles(templatePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			tmpl.Execute(w, map[string]interface{}{
+				"base_html": template.HTML(templates.GetBaseHTML()),
+				"tickets":   tickets,
+			})
 		}
 	}
 }
@@ -131,8 +192,9 @@ func (a *APIServer) event() http.HandlerFunc {
 			}
 
 			tmpl.Execute(w, map[string]interface{}{
-				"event":    event,
-				"comments": comments,
+				"event":     event,
+				"comments":  comments,
+				"base_html": template.HTML(templates.GetBaseHTML()),
 				//"cssPath":  cssPath,
 			})
 		}

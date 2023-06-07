@@ -80,27 +80,28 @@
         }
     </style>
 </head>
-<body>
-<h1 class="list-events-title">Список мероприятий</h1>
-{{ range . }}
-<div class="event">
-    <div class="row">
-        <div class="col-1"></div>
-        <div class="col-11">
-            <h2><a href="/event/{{ .ID }}">{{ .Title }}</a></h2>
-            <div class="category">{{ .Category }}</div>
-            <div class="description"><b>Описание:</b> {{ .Description }}</div>
-            <div class="datetime"><b>Начало:</b> {{ .StartDatetime }}</div>
-            <div class="datetime"><b>Конец:</b> {{ .EndDatetime }}</div>
-            <div class="price"><b>Цена:</b> {{ .Price }}</div>
-            <div class="address"><b>Адрес:</b> {{ .Address }}</div>
-            <div class="organizer"><b>Организация:</b> {{ .Organizer }}</div>
-            <nav class="contacts"><b>Контакты:</b> {{ .Contacts }}</nav>
+{{ .base_html }}
+<main style="padding-top: 55px;">
+    {{ range .list }}
+    <div class="event">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-11">
+                <h2><a href="/event/{{ .ID }}">{{ .Title }}</a></h2>
+                <div class="category">{{ .Category }}</div>
+                <div class="description"><b>Описание:</b> {{ .Description }}</div>
+                <div class="datetime"><b>Начало:</b> {{ .StartDatetime }}</div>
+                <div class="datetime"><b>Конец:</b> {{ .EndDatetime }}</div>
+                <div class="price"><b>Цена:</b> {{ .Price }}</div>
+                <div class="address"><b>Адрес:</b> {{ .Address }}</div>
+                <div class="organizer"><b>Организация:</b> {{ .Organizer }}</div>
+                <nav class="contacts"><b>Контакты:</b> {{ .Contacts }}</nav>
+            </div>
         </div>
     </div>
-</div>
-{{ else }}
-<h4> Мероприятий пока нету :( </h4>
-{{ end }}
-</body>
+    {{ else }}
+    <h4> Мероприятий пока нету :( </h4>
+    {{ end }}
+</main>
+
 </html>

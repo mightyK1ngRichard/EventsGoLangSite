@@ -116,8 +116,9 @@
 
     </style>
 </head>
+{{ .base_html }}
 <body>
-<div class="card">
+<div class="card" style="padding-top: 55px;">
     <h2>{{ .event.Title }}</h2>
     <p class="category">{{ .event.Category }}</p>
     <p class="description">{{ .event.Description }}</p>
@@ -148,6 +149,5 @@
     <div class="col-1">
     </div>
 </div>
-
 </body>
 </html>

@@ -92,6 +92,35 @@ func (r *EventRepository) EventByID(id string) (*model.Event, []*model.Comment, 
 	return e, comments, nil
 }
 
+func (r *EventRepository) EventByTitle(title string) ([]*model.Event, error) {
+	rows, err := r.store.db.Query(
+		`SELECT * FROM events WHERE title LIKE '%' || $1 || '%';`,
+		title,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var events = make([]*model.Event, 0)
+	for rows.Next() {
+		e := &model.Event{}
+		if err := rows.Scan(&e.ID, &e.Title, &e.Category, &e.Description, &e.StartDatetime, &e.EndDatetime, &e.Price,
+			&e.Address, &e.Organizer, &e.Contacts); err != nil {
+			return nil, err
+		}
+		e.StartDatetime = CorrectDate(e.StartDatetime)
+		e.EndDatetime = CorrectDate(e.EndDatetime)
+		events = append(events, e)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}
+
 func (r *EventRepository) GetCommentsOfPost(id string) ([]*model.Comment, error) {
 	comments, err := r.store.db.Query(
 		`SELECT 
