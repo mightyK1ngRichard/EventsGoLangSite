@@ -94,7 +94,7 @@ func (r *EventRepository) EventByID(id string) (*model.Event, []*model.Comment, 
 
 func (r *EventRepository) EventByTitle(title string) ([]*model.Event, error) {
 	rows, err := r.store.db.Query(
-		`SELECT * FROM events WHERE title LIKE '%' || $1 || '%';`,
+		`SELECT * FROM events WHERE LOWER(title) LIKE '%' || $1 || '%';`,
 		title,
 	)
 	if err != nil {
