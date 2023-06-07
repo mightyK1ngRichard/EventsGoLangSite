@@ -1,99 +1,99 @@
-.card {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
+/*.card {*/
+/*    background-color: #f5f5f5;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 4px;*/
+/*    padding: 10px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
-.card .title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
+/*.card .title {*/
+/*    font-size: 18px;*/
+/*    font-weight: bold;*/
+/*    margin-bottom: 5px;*/
+/*}*/
 
-.card .category {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 5px;
-}
+/*.card .category {*/
+/*    font-size: 14px;*/
+/*    color: #888;*/
+/*    margin-bottom: 5px;*/
+/*}*/
 
-.card .description {
-    font-size: 14px;
-    margin-bottom: 10px;
-}
+/*.card .description {*/
+/*    font-size: 14px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
-.card .details {
-    font-size: 12px;
-    color: #888;
-}
+/*.card .details {*/
+/*    font-size: 12px;*/
+/*    color: #888;*/
+/*}*/
 
-.card .details span {
-    margin-right: 10px;
-}
+/*.card .details span {*/
+/*    margin-right: 10px;*/
+/*}*/
 
-.card .price {
-    font-size: 16px;
-    font-weight: bold;
-    color: #555;
-}
+/*.card .price {*/
+/*    font-size: 16px;*/
+/*    font-weight: bold;*/
+/*    color: #555;*/
+/*}*/
 
-.card .address {
-    font-size: 14px;
-    color: #888;
-}
+/*.card .address {*/
+/*    font-size: 14px;*/
+/*    color: #888;*/
+/*}*/
 
-.card .organizer {
-    font-size: 14px;
-    color: #888;
-}
+/*.card .organizer {*/
+/*    font-size: 14px;*/
+/*    color: #888;*/
+/*}*/
 
-.card .contacts {
-    font-size: 14px;
-    color: #888;
-}
+/*.card .contacts {*/
+/*    font-size: 14px;*/
+/*    color: #888;*/
+/*}*/
 
-.responses {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+/*.responses {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
 
-.responses .col-1 {
-    flex: 1;
-}
+/*.responses .col-1 {*/
+/*    flex: 1;*/
+/*}*/
 
-.responses .col-11 {
-    flex: 11;
-}
+/*.responses .col-11 {*/
+/*    flex: 11;*/
+/*}*/
 
-.responses .Title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+/*.responses .Title {*/
+/*    font-size: 24px;*/
+/*    font-weight: bold;*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
-.responses .response {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
+/*.responses .response {*/
+/*    background-color: #f5f5f5;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 4px;*/
+/*    padding: 10px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
-.responses .response p {
-    font-size: 14px;
-    margin-bottom: 5px;
-}
+/*.responses .response p {*/
+/*    font-size: 14px;*/
+/*    margin-bottom: 5px;*/
+/*}*/
 
-.responses .response .CommentDate {
-    font-weight: bold;
-}
+/*.responses .response .CommentDate {*/
+/*    font-weight: bold;*/
+/*}*/
 
-.responses .response .CommentText {
-    color: #555;
-}
+/*.responses .response .CommentText {*/
+/*    color: #555;*/
+/*}*/
 
-.responses .response .UserId {
-    color: #888;
-}
+/*.responses .response .UserId {*/
+/*    color: #888;*/
+/*}*/

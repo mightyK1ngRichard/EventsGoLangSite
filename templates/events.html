@@ -87,15 +87,15 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col-11">
-            <h3><a href="/event/{{ .ID }}">{{ .Title }}</a></h3>
+            <h2><a href="/event/{{ .ID }}">{{ .Title }}</a></h2>
             <div class="category">{{ .Category }}</div>
-            <div class="description">Описание: {{ .Description }}</div>
-            <div class="datetime">Начало: {{ .StartDatetime }}</div>
-            <div class="datetime">Конец: {{ .EndDatetime }}</div>
-            <div class="price">Цена: {{ .Price }}</div>
-            <div class="address">Адрес: {{ .Address }}</div>
-            <div class="organizer">Организация: {{ .Organizer }}</div>
-            <nav class="contacts">Контакты: {{ .Contacts }}</nav>
+            <div class="description"><b>Описание:</b> {{ .Description }}</div>
+            <div class="datetime"><b>Начало:</b> {{ .StartDatetime }}</div>
+            <div class="datetime"><b>Конец:</b> {{ .EndDatetime }}</div>
+            <div class="price"><b>Цена:</b> {{ .Price }}</div>
+            <div class="address"><b>Адрес:</b> {{ .Address }}</div>
+            <div class="organizer"><b>Организация:</b> {{ .Organizer }}</div>
+            <nav class="contacts"><b>Контакты:</b> {{ .Contacts }}</nav>
         </div>
     </div>
 </div>

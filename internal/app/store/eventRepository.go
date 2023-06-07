@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
+	"time"
 )
 
 type EventRepository struct {
@@ -24,6 +25,8 @@ func (r *EventRepository) List() ([]*model.Event, error) {
 			&e.Address, &e.Organizer, &e.Contacts); err != nil {
 			return nil, err
 		}
+		e.StartDatetime = CorrectDate(e.StartDatetime)
+		e.EndDatetime = CorrectDate(e.EndDatetime)
 		events = append(events, e)
 	}
 
@@ -56,6 +59,8 @@ func (r *EventRepository) EventByID(id string) (*model.Event, []*model.Comment, 
 			id,
 		).Scan(&e.ID, &e.Title, &e.Category, &e.Description, &e.StartDatetime, &e.EndDatetime, &e.Price,
 			&e.Address, &e.Organizer, &e.Contacts)
+		e.StartDatetime = CorrectDate(e.StartDatetime)
+		e.EndDatetime = CorrectDate(e.EndDatetime)
 		if err != nil {
 			doneCommentsOfEvent <- err
 			return
@@ -110,6 +115,7 @@ func (r *EventRepository) GetCommentsOfPost(id string) ([]*model.Comment, error)
 		if err := comments.Scan(&e.UserId, &e.CommentText, &e.CommentDate); err != nil {
 			return nil, err
 		}
+		e.CommentDate = CorrectDate(e.CommentDate)
 		result = append(result, e)
 	}
 
@@ -117,4 +123,12 @@ func (r *EventRepository) GetCommentsOfPost(id string) ([]*model.Comment, error)
 		return nil, err
 	}
 	return result, nil
+}
+
+func CorrectDate(date string) string {
+	t, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		return ""
+	}
+	return t.Format("2 January 2006, Monday 15:04:05 MST")
 }
