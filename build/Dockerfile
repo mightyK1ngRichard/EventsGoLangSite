@@ -1,11 +1,13 @@
-FROM golang:1.18
+FROM golang:1.18-buster
 
 WORKDIR /opt/app
 
 COPY . .
 
-RUN go build cmd/main/main.go
+RUN go mod download
 
-EXPOSE 8000
+RUN go build -o app cmd/main/main.go
 
-CMD ["./main"]
+#EXPOSE 8010
+
+CMD ["./app"]

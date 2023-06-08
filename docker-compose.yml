@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   db:
+    container_name: events-db
     image: postgres:12
     volumes:
       - type: volume
@@ -13,6 +14,16 @@ services:
       POSTGRES_DB: eventDB
       POSTGRES_PASSWORD: password
 
+  main:
+    container_name: go-app
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+    command: ./app
+    ports:
+      - "8015:8015"
+    depends_on:
+      - db
 
 volumes:
   postgresdb-data:
