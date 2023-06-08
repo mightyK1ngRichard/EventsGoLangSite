@@ -1,5 +1,5 @@
 -- Создание таблицы "Мероприятия"
-CREATE TABLE Events
+CREATE TABLE IF NOT EXISTS Events
 (
     id             BIGSERIAL PRIMARY KEY,
     title          VARCHAR(100) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE Events
 );
 
 -- Создание таблицы "Пользователи"
-CREATE TABLE Users
+CREATE TABLE IF NOT EXISTS Users
 (
     id              BIGSERIAL PRIMARY KEY,
     name            VARCHAR(100) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE Users
 );
 
 -- Создание таблицы "Билеты"
-CREATE TABLE Tickets
+CREATE TABLE IF NOT EXISTS Tickets
 (
     id            BIGSERIAL PRIMARY KEY,
     price         DECIMAL(10, 2) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE Tickets
 );
 
 -- Создание таблицы "Избранное"
-CREATE TABLE Favorites
+CREATE TABLE IF NOT EXISTS Favorites
 (
     id       BIGSERIAL PRIMARY KEY,
     event_id INT NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE Favorites
 );
 
 -- Создание таблицы "Комментарии"
-CREATE TABLE Comments
+CREATE TABLE IF NOT EXISTS Comments
 (
     id           BIGSERIAL PRIMARY KEY,
     comment_text VARCHAR(255) NOT NULL,
