@@ -7,7 +7,6 @@ services:
       - type: volume
         source: postgresdb-data
         target: /var/lib/postgresql/data
-      - "./build/init.sql:/docker-entrypoint-initdb.d/init.sql"
     ports:
       - "5432:5432"
     environment:
