@@ -12,7 +12,6 @@ func GetBaseHTML() string {
 						<li><a href="/events" class="nav-link px-2 text-white">Мероприятия</a></li>
 						<li><a href="/tickets" class="nav-link px-2 text-white">Билеты</a></li>
 						<li><a href="/create-event" class="nav-link px-2 text-white">Создать</a></li>
-						<li><a href="#" class="nav-link px-2 text-white">Info</a></li>
 					</ul>
 		
 					<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="POST" action="/events">

@@ -11,11 +11,18 @@
         }
 
         .card {
-            background-color: rgba(24, 24, 26, 0.96);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+        }
+
+        .card .col-10 {
+            margin-bottom: 20px;
             border: 1px solid #ded2d2;
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: rgba(24, 24, 26, 0.96);
         }
 
         .card h2 {
@@ -71,14 +78,6 @@
             align-items: center;
         }
 
-        .responses .col-1 {
-            flex: 1;
-        }
-
-        .responses .col-11 {
-            flex: 11;
-        }
-
         .responses .Title {
             font-size: 24px;
             font-weight: bold;
@@ -97,7 +96,7 @@
         .responses .response p {
             font-size: 14px;
             margin-bottom: 5px;
-            color: #3b3a3a;
+            color: #6c6c6e;
         }
 
         .responses .response .CommentDate {
@@ -109,7 +108,7 @@
         }
 
         .responses .response .UserId {
-            color: #939393;
+            color: #ffffff;
         }
 
     </style>
@@ -117,21 +116,24 @@
 {{ .base_html }}
 <body>
 <div class="card">
-    <h2>{{ .event.Title }}</h2>
-    <p class="category">{{ .event.Category }}</p>
-    <p class="description">{{ .event.Description }}</p>
-    <div class="details">
-        <span>Начало: {{ .event.StartDatetime }}</span>
-        <span>Конец: {{ .event.EndDatetime }}</span>
+    <div class="col-1"></div>
+    <div class="col-10">
+        <h2>{{ .event.Title }}</h2>
+        <p class="category">{{ .event.Category }}</p>
+        <p class="description">{{ .event.Description }}</p>
+        <div class="details">
+            <span>Начало: {{ .event.StartDatetime }}</span>
+            <span>Конец: {{ .event.EndDatetime }}</span>
+        </div>
+        <p class="price">Цена: {{ .event.Price }} руб.</p>
+        <p class="address">Адрес: {{ .event.Address }}</p>
+        <p class="organizer">Организация: {{ .event.Organizer }}</p>
+        <p class="contacts">Контакты: {{ .event.Contacts }}</p>
     </div>
-    <p class="price">Цена: {{ .event.Price }} руб.</p>
-    <p class="address">Адрес: {{ .event.Address }}</p>
-    <p class="organizer">Организация: {{ .event.Organizer }}</p>
-    <p class="contacts">Контакты: {{ .event.Contacts }}</p>
+    <div class="col-1"></div>
 </div>
 <div class="responses">
-    <div class="col-1">
-    </div>
+    <div class="col-1"></div>
     <div class="col-10">
         <h1 class="Title">Комментарии:</h1>
         {{ range .comments }}
@@ -144,8 +146,7 @@
         <h4> Комментариев пока нету :( </h4>
         {{ end }}
     </div>
-    <div class="col-1">
-    </div>
+    <div class="col-1"></div>
 </div>
 </body>
 </html>
