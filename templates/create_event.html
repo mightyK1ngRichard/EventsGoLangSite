@@ -27,12 +27,29 @@
             }
         }
     </script>
+    <style>
+        body {
+            background-color: #000;
+        }
 
+        .form-control {
+            background-color: rgba(24, 24, 26, 0.96);
+            color: #ffffff;
+        }
+
+        .form-label {
+            color: #ffffff;
+        }
+
+        hr {
+            color: #ffffff;
+        }
+    </style>
 </head>
 {{ .base_html }}
 <body>
-<div class="centre-column mt-5 col-8" style="padding-left: 20px; padding-top: 10px;">
-    <h1>Новые событие</h1>
+<div class="centre-column mt-5 col-8" style="padding-left: 20px;">
+    <h1 style="color: #ffffff;">Новые событие</h1>
     <hr/>
     <form id="event-form" method="POST" action="/create-event" onsubmit="validateForm(event);">
         <div class="mb-3">
@@ -45,7 +62,7 @@
                                                  placeholder="Введите категорию">
         </div>
 
-        <div class="container">
+        <div class="container-date">
             <div class="row">
                 <div class="col-md-6">
                     <label for="date_start" class="form-label">Начало</label>
@@ -60,14 +77,14 @@
             </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" style="padding-top: 10px">
             <label for="title" class="form-label">Адрес</label>
             <label for="address"></label><input name="address" type="text" class="form-control" id="address"
                                                 placeholder="Введите адрес">
         </div>
 
         <div class="mb-3">
-            <label for="title" title="form-label">Организация</label>
+            <label for="title" class="form-label">Организация</label>
             <label for="organization"></label><input name="organization" type="text" class="form-control"
                                                      id="organization"
                                                      placeholder="Введите имя организации">

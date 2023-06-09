@@ -7,12 +7,12 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
         body {
-            background-color: #f8f0ff;
+            background-color: #000;
         }
 
         .card {
-            background-color: #e8d8ff;
-            border: 1px solid #c0a8ff;
+            background-color: rgba(24, 24, 26, 0.96);
+            border: 1px solid #ded2d2;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
@@ -22,7 +22,7 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
-            color: #551a8b;
+            color: #ffffff;
         }
 
         .card p {
@@ -33,16 +33,16 @@
 
         .card .category {
             font-weight: bold;
-            color: #ff69b4;
+            color: #525252;
         }
 
         .card .description {
-            color: #555555;
+            color: #ffffff;
         }
 
         .card .details {
             font-size: 12px;
-            color: #888888;
+            color: #ffffff;
         }
 
         .card .details span {
@@ -50,21 +50,19 @@
         }
 
         .card .price {
-            font-size: 16px;
-            font-weight: bold;
-            color: #551a8b;
+            color: #ffffff;
         }
 
         .card .address {
-            color: #888888;
+            color: #ffffff;
         }
 
         .card .organizer {
-            color: #888888;
+            color: #ffffff;
         }
 
         .card .contacts {
-            color: #888888;
+            color: #ffffff;
         }
 
         .responses {
@@ -85,12 +83,12 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
-            color: #551a8b;
+            color: #ffffff;
         }
 
         .responses .response {
-            background-color: #e8d8ff;
-            border: 1px solid #c0a8ff;
+            background-color: rgba(24, 24, 26, 0.96);
+            border: 1px solid #626262;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
@@ -99,7 +97,7 @@
         .responses .response p {
             font-size: 14px;
             margin-bottom: 5px;
-            color: #333333;
+            color: #3b3a3a;
         }
 
         .responses .response .CommentDate {
@@ -107,18 +105,18 @@
         }
 
         .responses .response .CommentText {
-            color: #555555;
+            color: #ffffff;
         }
 
         .responses .response .UserId {
-            color: #888888;
+            color: #939393;
         }
 
     </style>
 </head>
 {{ .base_html }}
 <body>
-<div class="card" style="padding-top: 55px;">
+<div class="card">
     <h2>{{ .event.Title }}</h2>
     <p class="category">{{ .event.Category }}</p>
     <p class="description">{{ .event.Description }}</p>
