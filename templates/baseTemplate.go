@@ -8,16 +8,15 @@ const (
 	HomeURL     = "/home"
 	EventsURL   = "/events"
 	NewEventURL = "/create-event"
-	//SignInURL   = "/signIn"
-	SignUpURL  = "/signUp"
-	TicketsURL = "/tickets"
-	EventURL   = "/event/{id}"
+	SignInURL   = "/signIn"
+	SignUpURL   = "/signUp"
+	TicketsURL  = "/tickets"
+	EventURL    = "/event/{id}"
 )
 
 func GetBaseHTML() string {
 	return fmt.Sprintf(
 		`
-
 	<body>
 		<header class="p-3 text-bg-dark">
 			<div class="container">
@@ -34,7 +33,7 @@ func GetBaseHTML() string {
 						<input name="searching_text" type="search" class="form-control form-control-dark text-bg-dark" placeholder="Поиск заголовка" aria-label="Search">
 					</form>
 						<div class="text-end">
-						<a type="button" href="#" class="btn btn-outline-light me-2">Войти</a>
+						<a type="button" href="%s" class="btn btn-outline-light me-2">Войти</a>
 						<a type="button" href="%s" class="btn btn-warning">Регистрация</a>
 					</div>
 				</div>
@@ -46,6 +45,7 @@ func GetBaseHTML() string {
 		TicketsURL,
 		NewEventURL,
 		EventsURL,
+		SignInURL,
 		SignUpURL,
 	)
 }
