@@ -27,6 +27,7 @@ func New(config *Config) *Server {
 	}
 }
 
+// Start Запуск сервера.
 func (a *Server) Start() error {
 	if err := a.configLogger(); err != nil {
 		return err
@@ -39,6 +40,7 @@ func (a *Server) Start() error {
 	return http.ListenAndServe(a.config.BindAddr, a.router)
 }
 
+// Наш логгер.
 func (a *Server) configLogger() error {
 	level, err := logrus.ParseLevel(a.config.LogLevel)
 	if err != nil {
@@ -48,6 +50,7 @@ func (a *Server) configLogger() error {
 	return nil
 }
 
+// configRouter. Наши маршруты.
 func (a *Server) configRouter() {
 	a.router.HandleFunc(templates.EventsURL, a.events())
 	a.router.HandleFunc(templates.TicketsURL, a.tickets())
@@ -56,9 +59,10 @@ func (a *Server) configRouter() {
 	a.router.HandleFunc(templates.SignUpURL, a.signUp())
 	a.router.HandleFunc(templates.SignInURL, a.signIn())
 	a.router.HandleFunc(templates.HomeURL, a.home())
-	a.router.HandleFunc("/", a.notFoundPage())
+	a.router.NotFoundHandler = a.notFoundPage()
 }
 
+// Подключаем хранилище для работы с БД.
 func (a *Server) configStore() error {
 	st := store.NewStore(a.config.Store, a.logger)
 	if err := st.Open(); err != nil {
@@ -68,11 +72,13 @@ func (a *Server) configStore() error {
 	return nil
 }
 
+// Домашнаяя страница.
 func (a *Server) home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Все мероприятия.
 func (a *Server) events() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -126,6 +132,7 @@ func (a *Server) events() http.HandlerFunc {
 	}
 }
 
+// Создать мероприятие.
 func (a *Server) newEvent() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -170,6 +177,7 @@ func (a *Server) newEvent() http.HandlerFunc {
 	}
 }
 
+// Билеты.
 func (a *Server) tickets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tickets, err := a.store.Ticket().Tickets()
@@ -194,6 +202,7 @@ func (a *Server) tickets() http.HandlerFunc {
 	}
 }
 
+// Открыть мероприятие.
 func (a *Server) event() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -229,6 +238,7 @@ func (a *Server) event() http.HandlerFunc {
 	}
 }
 
+// Авторизация.
 func (a *Server) signUp() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -268,6 +278,7 @@ func (a *Server) signUp() http.HandlerFunc {
 	}
 }
 
+// Вход.
 func (a *Server) signIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -277,7 +288,9 @@ func (a *Server) signIn() http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			tmpl.Execute(w, nil)
+			if err := tmpl.Execute(w, nil); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
 
 		case "POST":
 			defer http.Redirect(w, r, "/events", http.StatusFound)
@@ -305,10 +318,12 @@ func (a *Server) signIn() http.HandlerFunc {
 	}
 }
 
+// Вывод ошибки в json.
 func (a *Server) error(w http.ResponseWriter, r *http.Request, statusCode int, err error) {
 	a.respond(w, r, statusCode, map[string]string{"error": err.Error()})
 }
 
+// Вывод данных в json.
 func (a *Server) respond(w http.ResponseWriter, r *http.Request, statusCode int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
@@ -321,13 +336,22 @@ func (a *Server) respond(w http.ResponseWriter, r *http.Request, statusCode int,
 	}
 }
 
+// Страница не найдена.
 func (a *Server) notFoundPage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-
+		tmpl, err := getHTMLPage("not_found_page")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if err := tmpl.Execute(w, nil); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 
+// Возваращает html страницу для рендера.
 func getHTMLPage(nameHTMLFile string) (*template.Template, error) {
 	rootDir, err := filepath.Abs(".")
 	if err != nil {
