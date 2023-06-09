@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Users
 (
     id              BIGSERIAL PRIMARY KEY,
     name            VARCHAR(100) NOT NULL DEFAULT 'user',
-    email           VARCHAR(100) NOT NULL,
+    email           VARCHAR(100) NOT NULL UNIQUE,
     password        VARCHAR(400)  NOT NULL,
     age             INT          NOT NULL DEFAULT 0,
     address         VARCHAR(255) NOT NULL DEFAULT '',
