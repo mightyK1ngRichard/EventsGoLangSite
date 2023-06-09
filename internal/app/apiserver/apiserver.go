@@ -51,7 +51,6 @@ func (a *APIServer) configLogger() error {
 	if err != nil {
 		return err
 	}
-
 	a.logger.SetLevel(level)
 	return nil
 }
@@ -75,7 +74,6 @@ func (a *APIServer) configStore() error {
 
 func (a *APIServer) home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 	}
 }
 
@@ -135,6 +133,7 @@ func (a *APIServer) events() http.HandlerFunc {
 
 	}
 }
+
 func (a *APIServer) newEvent() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
