@@ -15,7 +15,7 @@ jobs:
     - name: Set up Docker Compose
       uses: docker/compose-action@v1
       with:
-        compose-file: docker-compose.yml
+        compose-file: ../../docker-compose.yml
     
     - name: Build and Deploy
       run: |
