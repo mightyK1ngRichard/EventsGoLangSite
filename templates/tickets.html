@@ -38,9 +38,35 @@
             margin-left: 10px;
         }
     </style>
-    {{ .base_html }}
 </head>
 <body>
+{{ if .isAuth }}
+<body>
+<header class="p-3 text-bg-dark">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
+                <li><a href="/events" class="nav-link px-2 text-white">Мероприятия</a></li>
+                <li><a href="/tickets" class="nav-link px-2 text-white">Билеты</a></li>
+                <li><a href="/create-event" class="nav-link px-2 text-white">Создать</a></li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="POST" action="%s">
+                <input name="searching_text" type="search" class="form-control form-control-dark text-bg-dark" placeholder="Поиск заголовка" aria-label="Search">
+            </form>
+            <div class="text-end">
+                <a type="button" href="/logout" class="btn btn-outline-light me-2">Выйти</a>
+                <a type="button" href="#" class="btn btn-warning">{{ .user.Name }}</a>
+            </div>
+        </div>
+    </div>
+</header>
+</body>
+{{ else }}
+{{ .base_html }}
+{{ end }}
 <div class="container-tickets" style="padding-top: 60px">
     {{range .tickets}}
     <div class="card">

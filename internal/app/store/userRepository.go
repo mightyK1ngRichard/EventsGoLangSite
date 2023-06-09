@@ -37,3 +37,15 @@ func (r *UserRepository) CheckUser(u *model.User) (*model.User, error) {
 
 	return tmpUser, nil
 }
+
+func (r *UserRepository) FindById(id string) (*model.User, error) {
+	tmpUser := &model.User{}
+	if err := r.store.db.QueryRow(
+		`SELECT id, name, email, age, address, viewing_history  FROM users WHERE id = $1;`,
+		id,
+	).Scan(&tmpUser.ID, &tmpUser.Name, &tmpUser.Email, &tmpUser.Age, &tmpUser.Address, &tmpUser.ViewingHistory); err != nil {
+		return nil, err
+	}
+
+	return tmpUser, nil
+}

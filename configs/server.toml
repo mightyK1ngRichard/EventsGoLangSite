@@ -3,3 +3,4 @@ log_level ="debug"
 [store]
 #database_url = "host=db dbname=eventDB port=5432 user=unanimous password=password sslmode=disable"
 database_url = "host=dc-webdev.bmstu.ru dbname=student_dimapermyakov55 port=8080 user=student_dimapermyakov55 password=qwerty123 sslmode=disable search_path=Events"
+session_key = "1230131920419130549nfskld242432boss"

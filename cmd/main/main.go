@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/BurntSushi/toml"
+	"github.com/gorilla/sessions"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/server"
 	"log"
 )
@@ -22,7 +23,8 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	if err := server.New(config).Start(); err != nil {
+	session := sessions.NewCookieStore([]byte(config.SessionKey))
+	if err := server.New(config, session).Start(); err != nil {
 		log.Fatal(err)
 	}
 }

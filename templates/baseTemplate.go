@@ -9,6 +9,7 @@ const (
 	EventsURL   = "/events"
 	NewEventURL = "/create-event"
 	SignInURL   = "/signIn"
+	LogoutURL   = "/logout"
 	SignUpURL   = "/signUp"
 	TicketsURL  = "/tickets"
 	EventURL    = "/event/{id}"

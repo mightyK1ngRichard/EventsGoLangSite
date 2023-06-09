@@ -1,8 +1,11 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/store"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/templates"
@@ -12,23 +15,34 @@ import (
 	"path/filepath"
 )
 
+const (
+	sessionName        = "mightyK1ngRichard"
+	ctxKeyUser  ctxKey = iota
+)
+
+// Ключи контекста.
+type ctxKey int8
+
 type Server struct {
-	config *Config
-	logger *logrus.Logger
-	router *mux.Router
-	store  *store.Store
+	config       *Config
+	logger       *logrus.Logger
+	router       *mux.Router
+	store        *store.Store
+	sessionStore sessions.Store
 }
 
-func New(config *Config) *Server {
+func New(config *Config, session sessions.Store) *Server {
 	return &Server{
-		config: config,
-		logger: logrus.New(),
-		router: mux.NewRouter(),
+		config:       config,
+		logger:       logrus.New(),
+		router:       mux.NewRouter(),
+		sessionStore: session,
 	}
 }
 
 // Start Запуск сервера.
 func (a *Server) Start() error {
+	defer a.store.Close()
 	if err := a.configLogger(); err != nil {
 		return err
 	}
@@ -52,12 +66,13 @@ func (a *Server) configLogger() error {
 
 // configRouter. Наши маршруты.
 func (a *Server) configRouter() {
-	a.router.HandleFunc(templates.EventsURL, a.events())
-	a.router.HandleFunc(templates.TicketsURL, a.tickets())
-	a.router.HandleFunc(templates.NewEventURL, a.newEvent())
-	a.router.HandleFunc(templates.EventURL, a.event())
+	a.router.HandleFunc(templates.EventsURL, a.authenticateUser(a.events()).ServeHTTP)
+	a.router.HandleFunc(templates.TicketsURL, a.authenticateUser(a.tickets()).ServeHTTP)
+	a.router.HandleFunc(templates.NewEventURL, a.authenticateUser(a.newEvent()).ServeHTTP)
+	a.router.HandleFunc(templates.EventURL, a.authenticateUser(a.event()).ServeHTTP)
 	a.router.HandleFunc(templates.SignUpURL, a.signUp())
 	a.router.HandleFunc(templates.SignInURL, a.signIn())
+	a.router.HandleFunc(templates.LogoutURL, a.logout())
 	a.router.HandleFunc(templates.HomeURL, a.home())
 	a.router.NotFoundHandler = a.notFoundPage()
 }
@@ -69,6 +84,59 @@ func (a *Server) configStore() error {
 		return err
 	}
 	a.store = st
+	return nil
+}
+
+// Аутинфиакация юзера.
+func (a *Server) authenticateUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := a.sessionStore.Get(r, sessionName)
+		if err != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+		id, ok := session.Values["user_id"]
+		if !ok {
+			next.ServeHTTP(w, r)
+			return
+		}
+		user, err2 := a.store.User().FindById(id.(string))
+		if err2 != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, user)))
+	})
+}
+
+// Проверка авторизации.
+//func (a *Server) isAuth(r *http.Request) *model.User {
+//	session, err := a.sessionStore.Get(r, sessionName)
+//	if err == nil {
+//		userId, ok := session.Values["user_id"]
+//		if ok {
+//			res, ok := userId.(string)
+//			if ok {
+//				user, err := a.store.User().FindById(res)
+//				if err == nil {
+//					return user
+//				}
+//			}
+//		}
+//	}
+//	return nil
+//}
+
+// Удаление сессии.
+func (a *Server) deleteSession(w http.ResponseWriter, r *http.Request) error {
+	session, err := a.sessionStore.Get(r, sessionName)
+	if err != nil {
+		return err
+	}
+	session.Options.MaxAge = -1
+	if err := a.sessionStore.Save(r, w, session); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -94,11 +162,27 @@ func (a *Server) events() http.HandlerFunc {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				if err := tmpl.Execute(w, map[string]interface{}{
-					"base_html": template.HTML(templates.GetBaseHTML()),
-					"list":      list,
-				}); err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
+
+				// Смотрим контекст на авторизацию.
+				user, ok := r.Context().Value(ctxKeyUser).(*model.User)
+				if ok {
+					if err := tmpl.Execute(w, map[string]interface{}{
+						"list":   list,
+						"isAuth": true,
+						"user":   user,
+					}); err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+					}
+
+				} else {
+					if err := tmpl.Execute(w, map[string]interface{}{
+						"base_html": template.HTML(templates.GetBaseHTML()),
+						"list":      list,
+						"isAuth":    false,
+						"user":      nil,
+					}); err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+					}
 				}
 			}
 
@@ -109,21 +193,33 @@ func (a *Server) events() http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			rootDir, err := filepath.Abs(".")
+			tmpl, err := getHTMLPage("events")
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			templatePath := filepath.Join(rootDir, "templates", "events.html")
-			tmpl, err := template.ParseFiles(templatePath)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+
+			// Смотрим контекст на авторизацию.
+			user, ok := r.Context().Value(ctxKeyUser).(*model.User)
+			if ok {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"list":   events,
+					"isAuth": true,
+					"user":   user,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+
+			} else {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"base_html": template.HTML(templates.GetBaseHTML()),
+					"list":      events,
+					"isAuth":    false,
+					"user":      nil,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
 			}
-			tmpl.Execute(w, map[string]interface{}{
-				"base_html": template.HTML(templates.GetBaseHTML()),
-				"list":      events,
-			})
 
 		default:
 			http.NotFound(w, r)
@@ -142,10 +238,24 @@ func (a *Server) newEvent() http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			if err := tmpl.Execute(w, map[string]interface{}{
-				"base_html": template.HTML(templates.GetBaseHTML()),
-			}); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			// Смотрим контекст на авторизацию.
+			user, ok := r.Context().Value(ctxKeyUser).(*model.User)
+			if ok {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"isAuth": true,
+					"user":   user,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+
+			} else {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"base_html": template.HTML(templates.GetBaseHTML()),
+					"isAuth":    false,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
 			}
 
 		case "POST":
@@ -192,11 +302,26 @@ func (a *Server) tickets() http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			if err := tmpl.Execute(w, map[string]interface{}{
-				"base_html": template.HTML(templates.GetBaseHTML()),
-				"tickets":   tickets,
-			}); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			// Смотрим контекст на авторизацию.
+			user, ok := r.Context().Value(ctxKeyUser).(*model.User)
+			if ok {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"isAuth":  true,
+					"user":    user,
+					"tickets": tickets,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+
+			} else {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"base_html": template.HTML(templates.GetBaseHTML()),
+					"isAuth":    false,
+					"tickets":   tickets,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
 			}
 		}
 	}
@@ -226,13 +351,29 @@ func (a *Server) event() http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			if err := tmpl.Execute(w, map[string]interface{}{
-				"event":     event,
-				"comments":  comments,
-				"base_html": template.HTML(templates.GetBaseHTML()),
-				//"cssPath":  cssPath,
-			}); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+			// Смотрим контекст на авторизацию.
+			user, ok := r.Context().Value(ctxKeyUser).(*model.User)
+			if ok {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"isAuth":   true,
+					"user":     user,
+					"event":    event,
+					"comments": comments,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+
+			} else {
+				if err := tmpl.Execute(w, map[string]interface{}{
+					"isAuth":    false,
+					"user":      user,
+					"event":     event,
+					"comments":  comments,
+					"base_html": template.HTML(templates.GetBaseHTML()),
+					//"cssPath":  cssPath,
+				}); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
 			}
 		}
 	}
@@ -293,7 +434,7 @@ func (a *Server) signIn() http.HandlerFunc {
 			}
 
 		case "POST":
-			defer http.Redirect(w, r, "/events", http.StatusFound)
+			defer http.Redirect(w, r, templates.EventsURL, http.StatusFound)
 			err := r.ParseForm()
 			if err != nil {
 				http.Error(w, "Ошибка при парсинге формы", http.StatusInternalServerError)
@@ -309,12 +450,37 @@ func (a *Server) signIn() http.HandlerFunc {
 
 			user, err := a.store.User().CheckUser(u)
 			if err != nil {
-				a.error(w, r, http.StatusUnprocessableEntity, err)
+				http.Redirect(w, r, templates.SignInURL, http.StatusFound)
 				return
 			}
 			// Скроем пароль.
 			user.Password = ""
+
+			session, err := a.sessionStore.Get(r, sessionName)
+			if err != nil {
+				a.errorPage(w)
+				return
+			}
+			session.Values["user_id"] = user.ID
+			if err := a.sessionStore.Save(r, w, session); err != nil {
+				a.errorPage(w)
+				return
+			}
+
 			//a.respond(w, r, http.StatusOK, user)
+		}
+	}
+}
+
+// Разлогирование
+func (a *Server) logout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			if err := a.deleteSession(w, r); err != nil {
+				a.errorPage(w)
+				return
+			}
+			http.Redirect(w, r, templates.EventsURL, http.StatusFound)
 		}
 	}
 }
@@ -364,4 +530,14 @@ func getHTMLPage(nameHTMLFile string) (*template.Template, error) {
 		return nil, err
 	}
 	return tmpl, nil
+}
+
+func (a *Server) errorPage(w http.ResponseWriter) {
+	htmlString := `
+	<html><body>
+	<h1>Что-то пошло не так:(</h1>
+	<p>Перейдите на страницу <a href="%s">Events</a></p>
+	</body></html>
+	`
+	fmt.Fprintf(w, htmlString, templates.EventsURL)
 }

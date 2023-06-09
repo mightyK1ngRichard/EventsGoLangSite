@@ -3,9 +3,10 @@ package server
 import "github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/store"
 
 type Config struct {
-	BindAddr string `toml:"bind_addr"`
-	LogLevel string `toml:"log_level"`
-	Store    *store.Config
+	BindAddr   string `toml:"bind_addr"`
+	LogLevel   string `toml:"log_level"`
+	SessionKey string `toml:"session_key"`
+	Store      *store.Config
 }
 
 func NewConfig() *Config {
