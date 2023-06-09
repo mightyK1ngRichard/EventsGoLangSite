@@ -1,6 +1,7 @@
 package apiserver
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/model"
 	"github.com/mightyK1ngRichard/EventsGoLangSite/internal/app/store"
@@ -9,14 +10,6 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
-)
-
-const (
-	homeURL     = "/home"
-	eventsURL   = "/events"
-	newEventURL = "/create-event"
-	ticketsURL  = "/tickets"
-	eventURL    = "/event/{id}"
 )
 
 type APIServer struct {
@@ -56,11 +49,13 @@ func (a *APIServer) configLogger() error {
 }
 
 func (a *APIServer) configRouter() {
-	a.router.HandleFunc(eventsURL, a.events())
-	a.router.HandleFunc(ticketsURL, a.tickets())
-	a.router.HandleFunc(newEventURL, a.newEvent())
-	a.router.HandleFunc(eventURL, a.event())
-	a.router.HandleFunc(homeURL, a.home())
+	a.router.HandleFunc(templates.EventsURL, a.events())
+	a.router.HandleFunc(templates.TicketsURL, a.tickets())
+	a.router.HandleFunc(templates.NewEventURL, a.newEvent())
+	a.router.HandleFunc(templates.EventURL, a.event())
+	a.router.HandleFunc(templates.SignUpURL, a.signUp())
+	//a.router.HandleFunc(templates.SignUpURL, a.signUp())
+	a.router.HandleFunc(templates.HomeURL, a.home())
 }
 
 func (a *APIServer) configStore() error {
@@ -80,29 +75,6 @@ func (a *APIServer) home() http.HandlerFunc {
 func (a *APIServer) events() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
-		case "POST":
-			titleFromForm := r.FormValue("searching_text")
-			events, err := a.store.Event().EventByTitle(titleFromForm)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			rootDir, err := filepath.Abs(".")
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			templatePath := filepath.Join(rootDir, "templates", "events.html")
-			tmpl, err := template.ParseFiles(templatePath)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			tmpl.Execute(w, map[string]interface{}{
-				"base_html": template.HTML(templates.GetBaseHTML()),
-				"list":      events,
-			})
-
 		case "GET":
 			list, err := a.store.Event().List()
 			if err != nil {
@@ -126,6 +98,29 @@ func (a *APIServer) events() http.HandlerFunc {
 					"list":      list,
 				})
 			}
+
+		case "POST":
+			titleFromForm := r.FormValue("searching_text")
+			events, err := a.store.Event().EventByTitle(titleFromForm)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			rootDir, err := filepath.Abs(".")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			templatePath := filepath.Join(rootDir, "templates", "events.html")
+			tmpl, err := template.ParseFiles(templatePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			tmpl.Execute(w, map[string]interface{}{
+				"base_html": template.HTML(templates.GetBaseHTML()),
+				"list":      events,
+			})
 
 		default:
 			http.NotFound(w, r)
@@ -248,5 +243,70 @@ func (a *APIServer) event() http.HandlerFunc {
 				//"cssPath":  cssPath,
 			})
 		}
+	}
+}
+
+func (a *APIServer) signUp() http.HandlerFunc {
+	type request struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			rootDir, err := filepath.Abs(".")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			templatePath := filepath.Join(rootDir, "templates", "register.html")
+			tmpl, err := template.ParseFiles(templatePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			tmpl.Execute(w, map[string]interface{}{
+				"base_html": template.HTML(templates.GetBaseHTML()),
+			})
+
+		case "POST":
+			defer http.Redirect(w, r, "/events", http.StatusFound)
+			err := r.ParseForm()
+			if err != nil {
+				http.Error(w, "Ошибка при парсинге формы", http.StatusInternalServerError)
+				return
+			}
+			email := r.Form.Get("email")
+			password := r.Form.Get("password")
+
+			u := &model.User{
+				Email:    email,
+				Password: password,
+			}
+			user, err := a.store.User().Create(u)
+			if err != nil {
+				a.error(w, r, http.StatusUnprocessableEntity, err)
+				return
+			}
+			// Скроем пароль.
+			user.Password = ""
+			//a.respond(w, r, http.StatusOK, user)
+		}
+	}
+}
+
+func (a *APIServer) error(w http.ResponseWriter, r *http.Request, statusCode int, err error) {
+	a.respond(w, r, statusCode, map[string]string{"error": err.Error()})
+}
+
+func (a *APIServer) respond(w http.ResponseWriter, r *http.Request, statusCode int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	if data != nil {
+		if err := json.NewEncoder(w).Encode(data); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 	}
 }

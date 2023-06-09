@@ -17,12 +17,12 @@ CREATE TABLE IF NOT EXISTS Events
 CREATE TABLE IF NOT EXISTS Users
 (
     id              BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(100) NOT NULL,
+    name            VARCHAR(100) NOT NULL DEFAULT 'user',
     email           VARCHAR(100) NOT NULL,
-    password        VARCHAR(50)  NOT NULL,
-    age             INT          NOT NULL,
-    address         VARCHAR(255) NOT NULL,
-    viewing_history VARCHAR(255) NOT NULL
+    password        VARCHAR(400)  NOT NULL,
+    age             INT          NOT NULL DEFAULT 0,
+    address         VARCHAR(255) NOT NULL DEFAULT '',
+    viewing_history VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 -- Создание таблицы "Билеты"
