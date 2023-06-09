@@ -15,6 +15,12 @@
             align-items: center;
         }
 
+        .auth-form form {
+            background-color: rgba(24, 24, 26, 0.96);
+            padding: 30px;
+            border-radius: 20px;
+        }
+
         .auth-form .form-group {
             width: 300px;
             margin-bottom: 10px;
@@ -41,12 +47,17 @@
             color: #ffffff;
             font-weight: bold;
         }
+
+        .btn-sign-in:hover {
+            background-color: #ad0019;
+        }
+
     </style>
 </head>
 {{ .base_html }}
 <body>
 <div class="auth-form">
-    <h2 style="color: #ffffff;">Регистрация</h2>
+    <h2 style="color: #ffffff; padding-bottom: 20px; padding-top: 20px;">Регистрация</h2>
     <form method="POST" action="/signUp" onsubmit="return validateForm()">
         <div class="form-group">
             <label for="email">Email</label>
@@ -60,7 +71,7 @@
             <label for="confirmPassword">Подтвердите пароль</label>
             <input type="password" id="confirmPassword" name="confirmPassword" required>
         </div>
-        <button type="submit">Войти</button>
+        <button class="btn-sign-in" type="submit">Войти</button>
     </form>
 </div>
 
