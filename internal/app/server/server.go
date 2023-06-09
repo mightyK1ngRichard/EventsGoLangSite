@@ -307,7 +307,7 @@ func (a *Server) signIn() http.HandlerFunc {
 				Password: password,
 			}
 
-			user, err := a.store.User().Create(u)
+			user, err := a.store.User().CheckUser(u)
 			if err != nil {
 				a.error(w, r, http.StatusUnprocessableEntity, err)
 				return
