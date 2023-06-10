@@ -21,7 +21,7 @@ services:
       dockerfile: build/Dockerfile
     command: ./app
     ports:
-      - "8015:80"
+      - "80:80"
     depends_on:
       - db
 
