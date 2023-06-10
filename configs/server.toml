@@ -1,4 +1,4 @@
-bind_addr = ":8015"
+bind_addr = ":80"
 log_level ="debug"
 [store]
 #database_url = "host=db dbname=eventDB port=5432 user=unanimous password=password sslmode=disable"
